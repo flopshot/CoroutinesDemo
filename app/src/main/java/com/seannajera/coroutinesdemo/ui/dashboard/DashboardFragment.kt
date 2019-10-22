@@ -1,6 +1,7 @@
 package com.seannajera.coroutinesdemo.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,8 +25,9 @@ class DashboardFragment : Fragment(), Injectable {
         val textView: TextView = root.findViewById(R.id.text_dashboard)
         dashboardViewModel
             .fetchText()
-            .observe(this::getLifecycle) { newVal ->
-                textView.text = newVal
+            .observe(this::getLifecycle) { title ->
+                Log.w("DashboardFragment","Title From ViewModel: $title")
+                textView.text = title
             }
         return root
     }

@@ -19,7 +19,7 @@ data class Item(
 
 @Dao
 interface ItemDao {
-    @Query("SELECT * FROM Item")
+    @Query("SELECT * FROM Item ORDER BY title")
     fun getAll(): Flow<List<Item>>
 
     @Query("SELECT * FROM Item WHERE title IN (:ids)")
@@ -30,6 +30,9 @@ interface ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg items: Item)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAll(items: List<Item>)
 
     @Delete
     fun delete(item: Item)
