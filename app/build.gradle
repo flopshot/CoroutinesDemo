@@ -51,7 +51,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.1.0'
     debugImplementation 'androidx.fragment:fragment-testing:1.1.0'
 
-    // 3rd Party Netwroking
+    // 3rd Party Networking
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     androidTestImplementation 'com.squareup.retrofit2:retrofit-mock:2.6.1'

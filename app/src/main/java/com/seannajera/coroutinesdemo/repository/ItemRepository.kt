@@ -17,33 +17,68 @@ import javax.inject.Singleton
 @Singleton
 class ItemRepository @Inject constructor(private val db: AppDatabase, private val api: ItemApi) {
 
-    @Volatile var itemRequestInFlight = false
+    private val itemSyncExecutor = object : ModelSyncExecutor<List<Item>>() {
 
-    fun getItems(): Flow<List<Item>> {
-        return db.itemDao().getAll()
+        override fun syncToPersistence(model: List<Item>) = db.itemDao().insertAll(model)
+
+        override fun loadFromPersistence() = db.itemDao().getAll()
+
+        override fun loadFromNetwork() = api.getItems()
+    }
+
+    fun getItems(): Flow<List<Item>> = itemSyncExecutor.getModelFlow()
+}
+
+abstract class ModelSyncExecutor<ModelType> {
+
+    @Volatile var requestInFlight = false
+
+    fun getModelFlow(): Flow<ModelType> =
+        initFromPersistence()
             .take(1)
             .onCompletion {
-                Log.w("Repo","First Items from DB: $it")
-
                 emitAll(
-                    if (!itemRequestInFlight) {
-
-                        itemRequestInFlight = true
-
-                        api.getItems()
-                            .onEach { items ->
-                                db.itemDao().insertAll(items)
-                                itemRequestInFlight = false
-                                Log.w("Repo", "Items from api: $items")
-                            }.flatMapLatest {
-                                Log.w("Repo", "After api Items from DB")
-                                db.itemDao().getAll()
-                            }
-                    } else {
-                        db.itemDao().getAll()
-                    }
+                    syncAndFlow()
                 )
             }
-            .catch{ e -> Log.w("Repo", "Caught Exception: ${e.localizedMessage}")}
+            .catch { e -> Log.w("Repo", "Caught Exception: ${e.localizedMessage}") }
+
+    protected abstract fun syncToPersistence(model: ModelType)
+
+    protected abstract fun loadFromPersistence(): Flow<ModelType>
+
+    protected abstract fun loadFromNetwork(): Flow<ModelType>
+
+    protected fun initFromPersistence(): Flow<ModelType> {
+        return loadFromPersistence()
+    }
+
+    protected fun onNetworkFailed(t: Throwable) {
+        Log.e("Api", "Error", t)
+    }
+
+    private fun syncAndFlow(): Flow<ModelType> {
+        return if (!requestInFlight) {
+
+            requestInFlight = true
+
+            loadFromNetwork()
+                .onEach { modelBeforeCall ->
+                    syncToPersistence(modelBeforeCall)
+                    requestInFlight = false
+                    Log.w("Repo", "Model from api: $modelBeforeCall")
+                }.flatMapLatest { modelAfterCall ->
+                    Log.w("Repo", "After api Model from DB: $modelAfterCall")
+                    loadFromPersistence()
+                }.catch { e ->
+                    requestInFlight = false
+                    onNetworkFailed(e)
+                    loadFromPersistence()
+                }
+        } else {
+            loadFromPersistence()
+        }
     }
 }
+
+
