@@ -7,9 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.seannajera.coroutinesdemo.R
 import com.seannajera.coroutinesdemo.dagger.Injectable
 import com.seannajera.coroutinesdemo.dagger.Provided
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DashboardFragment : Fragment(), Injectable {
@@ -26,17 +32,25 @@ class DashboardFragment : Fragment(), Injectable {
         val bottomTextView = root.findViewById<TextView>(R.id.text_dashboard_bottom)
         dashboardViewModel
             .fetchText()
-            .observe(this::getLifecycle) { title ->
-                Log.w("DashboardFragment","Title From ViewModel: $title for TextView")
-                textView.text = title
+            .onEach { title ->
+                Log.w("DashboardFragment", "Title From ViewModel: $title for TextView")
+                lifecycleScope.launch(Dispatchers.Main) {
+                    textView.text = title
+                }
             }
+            .flowOn(Dispatchers.IO)
+            .launchIn(lifecycleScope)
 
         dashboardViewModel
             .fetchText()
-            .observe(this::getLifecycle) { title ->
-                Log.w("DashboardFragment","Title From ViewModel: $title bottom TextView")
-                bottomTextView.text = title
+            .onEach { title ->
+                Log.w("DashboardFragment", "Title From ViewModel: $title for bottom TextView")
+                lifecycleScope.launch(Dispatchers.Main) {
+                    bottomTextView.text = title
+                }
             }
+            .flowOn(Dispatchers.IO)
+            .launchIn(lifecycleScope)
 
         return root
     }

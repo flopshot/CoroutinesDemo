@@ -65,7 +65,7 @@ class DashboardFragmentTest {
                 }
             }
         })
-        Thread.sleep(1200L) // TODO: This is a hack. Instead of LiveData, maybe just use Flow
+        Thread.sleep(1200L) // TODO: This is a hack.
         onView(withId(R.id.text_dashboard)).check(matches(withText("Some Title")))
     }
 }

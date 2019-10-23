@@ -5,8 +5,11 @@ apply plugin: 'kotlin-android-extensions'
 
 def roomVersion = "2.2.0"
 def navigationVersion = "2.2.0-beta01"
-def lifecycleVersion = "2.2.0-beta01"
 def daggerVersion = "2.24"
+def activityFragmentVersion = "1.1.0"
+def retrofitVersion = "2.6.1"
+def androidTestVersion = "1.2.0"
+def espressoVersion = "3.2.0"
 
 android {
     compileSdkVersion 29
@@ -47,16 +50,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0' // material design views
 
     // Fragment Scenario, Arch Component Support, Compat Fragment
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.fragment:fragment-ktx:1.1.0'
-    debugImplementation 'androidx.fragment:fragment-testing:1.1.0'
+    implementation "androidx.appcompat:appcompat:$activityFragmentVersion"
+    implementation "androidx.fragment:fragment-ktx:$activityFragmentVersion"
+    debugImplementation "androidx.fragment:fragment-testing:$activityFragmentVersion"
 
     // 3rd Party Networking
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
-    androidTestImplementation 'com.squareup.retrofit2:retrofit-mock:2.6.1'
-    implementation "com.squareup.retrofit2:converter-gson:2.6.1"
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    androidTestImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Dagger Dependency Injection
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -65,8 +67,7 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     // Arch Components
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-beta01"
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
@@ -79,10 +80,10 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.12'
-    debugImplementation 'androidx.test:runner:1.2.0'
-    debugImplementation "androidx.test:core:1.2.0"
-    debugImplementation "androidx.test:rules:1.2.0"
-    debugImplementation "androidx.test.espresso:espresso-contrib:3.2.0"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    debugImplementation "androidx.test:runner:$androidTestVersion"
+    debugImplementation "androidx.test:core:$androidTestVersion"
+    debugImplementation "androidx.test:rules:$androidTestVersion"
+    debugImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 }
