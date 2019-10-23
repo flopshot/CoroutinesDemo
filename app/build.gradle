@@ -57,8 +57,8 @@ dependencies {
     // 3rd Party Networking
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    androidTestImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    androidTestImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
 
     // Dagger Dependency Injection
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -68,13 +68,11 @@ dependencies {
 
     // Arch Components
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
     // Navigation
-    implementation "androidx.navigation:navigation-fragment:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
