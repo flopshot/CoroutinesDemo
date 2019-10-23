@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DashboardFragment : Fragment(), Injectable {
@@ -30,13 +29,13 @@ class DashboardFragment : Fragment(), Injectable {
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val textView = root.findViewById<TextView>(R.id.text_dashboard)
         val bottomTextView = root.findViewById<TextView>(R.id.text_dashboard_bottom)
+
         dashboardViewModel
             .fetchText()
             .onEach { title ->
-                Log.w("DashboardFragment", "Title From ViewModel: $title for TextView")
-                lifecycleScope.launch(Dispatchers.Main) {
-                    textView.text = title
-                }
+
+                Log.i("DashboardFragment", "Title From ViewModel: $title for TextView")
+                textView.text = title
             }
             .flowOn(Dispatchers.IO)
             .launchIn(lifecycleScope)
@@ -44,10 +43,9 @@ class DashboardFragment : Fragment(), Injectable {
         dashboardViewModel
             .fetchText()
             .onEach { title ->
-                Log.w("DashboardFragment", "Title From ViewModel: $title for bottom TextView")
-                lifecycleScope.launch(Dispatchers.Main) {
-                    bottomTextView.text = title
-                }
+
+                Log.i("DashboardFragment", "Title From ViewModel: $title for bottom TextView")
+                bottomTextView.text = title
             }
             .flowOn(Dispatchers.IO)
             .launchIn(lifecycleScope)

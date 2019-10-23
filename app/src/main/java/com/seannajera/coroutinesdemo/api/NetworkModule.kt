@@ -34,7 +34,6 @@ class NetworkModule {
     @Provides
     fun getOkHttpClient(cache: Cache): OkHttpClient {
         return OkHttpClient.Builder()
-
             .cache(cache)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

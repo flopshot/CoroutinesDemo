@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,22 +27,22 @@ class ItemRepository @Inject constructor(private val db: AppDatabase, private va
         override fun loadFromNetwork() = api.getItems()
     }
 
-    fun getItems(): Flow<List<Item>> = itemSyncExecutor.getModelFlow()
+    fun getItems(): Flow<List<Item>> = itemSyncExecutor.reactiveModel
 }
 
 abstract class ModelSyncExecutor<ModelType> {
 
-    @Volatile var requestInFlight = false
+    private var requestInFlight = AtomicBoolean(false)
 
-    fun getModelFlow(): Flow<ModelType> =
+    val reactiveModel: Flow<ModelType> =
         initFromPersistence()
             .take(1)
             .onCompletion {
                 emitAll(
-                    syncAndFlow()
+                    syncAndReturn()
                 )
             }
-            .catch { e -> Log.w("Repo", "Caught Exception: ${e.localizedMessage}") }
+            .catch { e -> Log.i("ModelSyncExecutor", "reactiveModel: ${e.localizedMessage}") }
 
     protected abstract fun syncToPersistence(model: ModelType)
 
@@ -49,29 +50,28 @@ abstract class ModelSyncExecutor<ModelType> {
 
     protected abstract fun loadFromNetwork(): Flow<ModelType>
 
-    protected fun initFromPersistence(): Flow<ModelType> {
-        return loadFromPersistence()
-    }
+    protected fun initFromPersistence(): Flow<ModelType> =loadFromPersistence()
 
-    protected fun onNetworkFailed(t: Throwable) {
-        Log.e("Api", "Error", t)
-    }
+    protected fun onNetworkFailed(t: Throwable) = Log.e("Api", "Error", t)
 
-    private fun syncAndFlow(): Flow<ModelType> {
-        return if (!requestInFlight) {
+    private fun syncAndReturn(): Flow<ModelType> {
+        return if (requestInFlight.get()) {
 
-            requestInFlight = true
+            requestInFlight.set(true)
 
             loadFromNetwork()
                 .onEach { modelBeforeCall ->
+
+                    Log.i("ModelSyncExecutor", "Model from api: $modelBeforeCall")
                     syncToPersistence(modelBeforeCall)
-                    requestInFlight = false
-                    Log.w("Repo", "Model from api: $modelBeforeCall")
                 }.flatMapLatest { modelAfterCall ->
-                    Log.w("Repo", "After api Model from DB: $modelAfterCall")
+
+                    requestInFlight.set(false)
+                    Log.i("ModelSyncExecutor", "After api Model from DB: $modelAfterCall")
                     loadFromPersistence()
                 }.catch { e ->
-                    requestInFlight = false
+
+                    requestInFlight.set(false)
                     onNetworkFailed(e)
                     loadFromPersistence()
                 }

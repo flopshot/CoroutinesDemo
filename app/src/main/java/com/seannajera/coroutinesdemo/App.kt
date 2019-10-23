@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 class App : Application(), HasAndroidInjector {
 
-    @Inject
-    lateinit var androidInjector : DispatchingAndroidInjector<Any>
+    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject lateinit var appDb: AppDatabase
 
@@ -39,6 +38,5 @@ class App : Application(), HasAndroidInjector {
                 appDb.itemDao().insertAll(item)
             }
         }
-
     }
 }
