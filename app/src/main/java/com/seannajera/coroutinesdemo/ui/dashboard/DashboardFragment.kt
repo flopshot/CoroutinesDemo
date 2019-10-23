@@ -22,13 +22,22 @@ class DashboardFragment : Fragment(), Injectable {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
+        val textView = root.findViewById<TextView>(R.id.text_dashboard)
+        val bottomTextView = root.findViewById<TextView>(R.id.text_dashboard_bottom)
         dashboardViewModel
             .fetchText()
             .observe(this::getLifecycle) { title ->
-                Log.w("DashboardFragment","Title From ViewModel: $title")
+                Log.w("DashboardFragment","Title From ViewModel: $title for TextView")
                 textView.text = title
             }
+
+        dashboardViewModel
+            .fetchText()
+            .observe(this::getLifecycle) { title ->
+                Log.w("DashboardFragment","Title From ViewModel: $title bottom TextView")
+                bottomTextView.text = title
+            }
+
         return root
     }
 }

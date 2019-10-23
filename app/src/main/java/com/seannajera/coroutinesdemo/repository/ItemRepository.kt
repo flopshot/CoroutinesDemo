@@ -17,18 +17,32 @@ import javax.inject.Singleton
 @Singleton
 class ItemRepository @Inject constructor(private val db: AppDatabase, private val api: ItemApi) {
 
+    @Volatile var itemRequestInFlight = false
+
     fun getItems(): Flow<List<Item>> {
         return db.itemDao().getAll()
             .take(1)
             .onCompletion {
                 Log.w("Repo","First Items from DB: $it")
-                emitAll(api.getItems().onEach { items ->
-                    db.itemDao().insertAll(items)
-                    Log.w("Repo", "Items from api: $items")
-                }.flatMapLatest {
-                    Log.w("Repo", "After api Items from DB")
-                    db.itemDao().getAll()
-                })
+
+                emitAll(
+                    if (!itemRequestInFlight) {
+
+                        itemRequestInFlight = true
+
+                        api.getItems()
+                            .onEach { items ->
+                                db.itemDao().insertAll(items)
+                                itemRequestInFlight = false
+                                Log.w("Repo", "Items from api: $items")
+                            }.flatMapLatest {
+                                Log.w("Repo", "After api Items from DB")
+                                db.itemDao().getAll()
+                            }
+                    } else {
+                        db.itemDao().getAll()
+                    }
+                )
             }
             .catch{ e -> Log.w("Repo", "Caught Exception: ${e.localizedMessage}")}
     }
