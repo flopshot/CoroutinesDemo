@@ -49,7 +49,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0' // material design views
 
-    // Fragment Scenario, Arch Component Support, Compat Fragment
+    // Fragment Scenario, Arch Component Support/Compat Fragment
     implementation "androidx.appcompat:appcompat:$activityFragmentVersion"
     implementation "androidx.fragment:fragment-ktx:$activityFragmentVersion"
     debugImplementation "androidx.fragment:fragment-testing:$activityFragmentVersion"
