@@ -38,7 +38,7 @@ class DashboardFragmentTest {
             .build()
 
         val networkBehavior = NetworkBehavior.create().apply {
-            setDelay(800L, TimeUnit.MILLISECONDS)
+            setDelay(400L, TimeUnit.MILLISECONDS)
             setFailurePercent(0)
         }
 
@@ -65,7 +65,7 @@ class DashboardFragmentTest {
                 }
             }
         })
-        Thread.sleep(1200L) // TODO: This is a hack.
+        Thread.sleep(1000L) // TODO: This is a hack.
         onView(withId(R.id.text_dashboard)).check(matches(withText("Some Title")))
     }
 }

@@ -42,7 +42,9 @@ abstract class ModelSyncExecutor<ModelType> {
                     syncAndReturn()
                 )
             }
-            .catch { e -> Log.i("ModelSyncExecutor", "reactiveModel: ${e.localizedMessage}") }
+            .catch { e ->
+                Log.i("ModelSyncExecutor", "reactiveModel: ${e.localizedMessage}")
+            }
 
     protected abstract fun syncToPersistence(model: ModelType)
 
@@ -55,7 +57,7 @@ abstract class ModelSyncExecutor<ModelType> {
     protected fun onNetworkFailed(t: Throwable) = Log.e("Api", "Error", t)
 
     private fun syncAndReturn(): Flow<ModelType> {
-        return if (requestInFlight.get()) {
+        return if (!requestInFlight.get()) {
 
             requestInFlight.set(true)
 

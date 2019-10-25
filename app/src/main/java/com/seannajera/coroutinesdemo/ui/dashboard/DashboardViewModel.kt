@@ -18,6 +18,6 @@ class DashboardViewModel @Inject constructor(private val itemRepo: ItemRepositor
 
                 Log.i("DashboardViewModel", "Items From Repo: $it")
                 val title = it.firstOrNull()?.title
-                if (title.isNullOrBlank()) "BadNetwork" else title
+                if (title.isNullOrBlank()) "None" else title
             }
 }
