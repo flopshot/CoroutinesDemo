@@ -3,12 +3,17 @@ package com.seannajera.coroutinesdemo.repository
 import android.os.Build
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.ibm.icu.impl.Assert.fail
 import com.seannajera.coroutinesdemo.api.ItemApi
-import com.seannajera.coroutinesdemo.api.ItemsCallAdapterFactory
-import com.seannajera.coroutinesdemo.api.TestItemApi
+import com.seannajera.coroutinesdemo.api.ItemCallAdapterFactory
+import com.seannajera.coroutinesdemo.api.MockItemApi
 import com.seannajera.coroutinesdemo.persistence.AppDatabase
 import com.seannajera.coroutinesdemo.persistence.Item
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +35,7 @@ class ItemRepositoryTest {
     @Before
     fun setup() {
         val retrofit = Retrofit.Builder()
-            .addCallAdapterFactory(ItemsCallAdapterFactory.create())
+            .addCallAdapterFactory(ItemCallAdapterFactory.create())
             .baseUrl("https://api.github.com/")
             .build()
 
@@ -50,17 +55,28 @@ class ItemRepositoryTest {
             AppDatabase::class.java
         ).allowMainThreadQueries().build()
 
-        itemRepository = ItemRepository(itemDb, TestItemApi(behaviorDelegate))
+        itemRepository = ItemRepository(itemDb, MockItemApi(behaviorDelegate))
     }
 
     @Test
-    fun getItemFromRepository() = runBlocking {
+    fun getItemFromRepository() = runBlocking<Unit> {
         val dbItems = listOf(Item("Item From DB 1"), Item("Item From DB 2"))
         val dbItemsAfterApiSync = listOf(Item("Item From Api"), Item("Item From DB 1"), Item("Item From DB 2"))
         itemDb.itemDao().insertAll(dbItems)
 
-        val itemsFromRepo = itemRepository.getItems()
+       val flowFromRepo = itemRepository.getItems()
 
-        assert(itemsFromRepo.toList() == listOf(dbItems, dbItemsAfterApiSync))
+        var i = 0
+        flowFromRepo.take(2)
+            .flowOn(Dispatchers.Unconfined)
+            .onEach{
+                if (i == 0) {
+                    if (it != dbItems) fail("$dbItems does not equal $it")
+                    i++
+                } else {
+                    if (it != dbItemsAfterApiSync) fail("$dbItemsAfterApiSync does not equal $it")
+                }
+            }
+            .launchIn(this)
     }
 }

@@ -9,14 +9,14 @@ import retrofit2.Retrofit
 import retrofit2.mock.BehaviorDelegate
 import java.lang.reflect.Type
 
-class TestItemApi(private val behaviorDelegate: BehaviorDelegate<ItemApi>) : ItemApi {
+class MockItemApi(private val behaviorDelegate: BehaviorDelegate<ItemApi>) : ItemApi {
     override fun getItems(): Flow<List<Item>> {
         val items = listOf(Item("Item From Api"))
         return behaviorDelegate.returningResponse(flowOf(items)).getItems()
     }
 }
 
-class ItemsCallAdapterFactory : CallAdapter.Factory() {
+class ItemCallAdapterFactory : CallAdapter.Factory() {
 
     override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit) =
 
@@ -29,7 +29,7 @@ class ItemsCallAdapterFactory : CallAdapter.Factory() {
 
     companion object {
         fun create(): CallAdapter.Factory {
-            return ItemsCallAdapterFactory()
+            return ItemCallAdapterFactory()
         }
     }
 }
