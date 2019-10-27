@@ -1,6 +1,5 @@
 package com.seannajera.coroutinesdemo.repository
 
-import android.util.Log
 import com.seannajera.coroutinesdemo.api.ItemApi
 import com.seannajera.coroutinesdemo.persistence.AppDatabase
 import com.seannajera.coroutinesdemo.persistence.Item
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,7 +43,7 @@ abstract class ModelSyncExecutor<ModelType> {
                 )
             }
             .catch { e ->
-                Log.i("ModelSyncExecutor", "reactiveModel: ${e.localizedMessage}")
+                Timber.i("reactiveModel: ${e.localizedMessage}")
             }
 
     protected abstract fun syncToPersistence(model: ModelType)
@@ -54,7 +54,7 @@ abstract class ModelSyncExecutor<ModelType> {
 
     protected fun initFromPersistence(): Flow<ModelType> =loadFromPersistence()
 
-    protected fun onNetworkFailed(t: Throwable) = Log.e("Api", "Error", t)
+    protected fun onNetworkFailed(t: Throwable) = Timber.e(t)
 
     private fun syncAndReturn(): Flow<ModelType> {
         return if (!requestInFlight.get()) {
@@ -64,12 +64,12 @@ abstract class ModelSyncExecutor<ModelType> {
             loadFromNetwork()
                 .onEach { modelBeforeCall ->
 
-                    Log.i("ModelSyncExecutor", "Model from api: $modelBeforeCall")
+                    Timber.i("Model from api: $modelBeforeCall")
                     syncToPersistence(modelBeforeCall)
                 }.flatMapLatest { modelAfterCall ->
 
                     requestInFlight.set(false)
-                    Log.i("ModelSyncExecutor", "After api Model from DB: $modelAfterCall")
+                    Timber.i("After api Model from DB: $modelAfterCall")
                     loadFromPersistence()
                 }.catch { e ->
 

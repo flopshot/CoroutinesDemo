@@ -3,8 +3,8 @@ package com.seannajera.coroutinesdemo.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.seannajera.coroutinesdemo.dagger.Bound
-import com.seannajera.coroutinesdemo.dagger.Provided
+import com.seannajera.coroutinesdemo.dagger.FromDagger
+import com.seannajera.coroutinesdemo.dagger.ToDagger
 import com.seannajera.coroutinesdemo.dagger.scopes.PerFragment
 import com.seannajera.coroutinesdemo.ui.dashboard.DashboardViewModel
 import dagger.Binds
@@ -18,7 +18,7 @@ abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
     @ViewModelKey(DashboardViewModel::class)
-    internal abstract fun bindDashboardViewModel(@Bound viewModel: DashboardViewModel): ViewModel
+    internal abstract fun bindDashboardViewModel(@ToDagger viewModel: DashboardViewModel): ViewModel
 
     @Binds
     internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
@@ -28,7 +28,7 @@ abstract class ViewModelFactoryModule {
 class ViewModelModule {
     @Provides
     @PerFragment
-    @Provided
+    @FromDagger
     internal fun getDashboardViewModel(
         factory: ViewModelProvider.Factory,
         storeOwner: ViewModelStoreOwner

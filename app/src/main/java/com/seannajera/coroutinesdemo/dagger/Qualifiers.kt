@@ -4,8 +4,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Bound
+annotation class ToDagger
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Provided
+annotation class FromDagger

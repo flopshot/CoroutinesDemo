@@ -3,8 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
-def roomVersion = "2.2.0"
-def navigationVersion = "2.2.0-beta01"
+def roomVersion = "2.2.1"
+def navigationVersion = "2.2.0-rc01"
 def daggerVersion = "2.24"
 def activityFragmentVersion = "1.1.0"
 def retrofitVersion = "2.6.1"
@@ -38,6 +38,12 @@ android {
         jvmTarget = "1.8"
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
 }
 
 dependencies {
@@ -58,7 +64,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    androidTestImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
+    testImplementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // Dagger Dependency Injection
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -84,4 +91,7 @@ dependencies {
     debugImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation "org.mockito:mockito-core:3.1.0"
+    testImplementation 'org.robolectric:robolectric:4.3.1'
 }
