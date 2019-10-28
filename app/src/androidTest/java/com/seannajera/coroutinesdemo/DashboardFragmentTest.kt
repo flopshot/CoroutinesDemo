@@ -46,7 +46,7 @@ class DashboardFragmentTest {
 
         // THEN verify we get the empty state "NONE" followed by the synced state "Item From Api"
         onView(withId(R.id.text_dashboard)).check(matches(withText("None")))
-        Thread.sleep(800L) // TODO: This is a hack.
+        Thread.sleep(1300L) // TODO: This is a hack.
         onView(withId(R.id.text_dashboard)).check(matches(withText("Item From Api")))
     }
 }

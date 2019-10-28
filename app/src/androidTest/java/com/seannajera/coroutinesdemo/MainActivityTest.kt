@@ -28,7 +28,7 @@ class MainActivityTest {
         // THEN we expect to see an empty state
         onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("None")))
 
-        Thread.sleep(1000)
+        Thread.sleep(1100)
 
         // followed by and update from the view model to update the state, after a repository sync
         onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("Item From Api")))
