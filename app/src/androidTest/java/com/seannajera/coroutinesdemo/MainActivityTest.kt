@@ -17,16 +17,20 @@ class MainActivityTest {
     fun testMainActivity() {
         ActivityScenario.launch(MainActivity::class.java)
 
+        // GIVEN we land on the home page
         onView(withId(R.id.text_home))
             .check(ViewAssertions.matches(withText("This is home Fragment")))
 
+        // WHEN we navigate to the dashboard page
         onView(withId(R.id.navigation_dashboard))
             .perform(click())
 
+        // THEN we expect to see an empty state
         onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("None")))
 
-        Thread.sleep(2000)
+        Thread.sleep(1000)
 
+        // followed by and update from the view model to update the state, after a repository sync
         onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("Item From Api")))
 
     }

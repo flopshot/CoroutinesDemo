@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.mock.MockRetrofit
 import retrofit2.mock.NetworkBehavior
 import java.util.concurrent.TimeUnit
@@ -18,7 +17,7 @@ class ApiModule {
     @Singleton
     fun getApi(apiRetrofit: Retrofit): ItemApi {
         val networkBehavior = NetworkBehavior.create().apply {
-            setDelay(1000L, TimeUnit.MILLISECONDS)
+            setDelay(900L, TimeUnit.MILLISECONDS)
             setFailurePercent(0)
         }
 
@@ -35,9 +34,7 @@ class ApiModule {
     @Singleton
     fun retrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .client(okHttpClient)
             .addCallAdapterFactory(ItemCallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl("https://api.github.com/")
             .build()
     }

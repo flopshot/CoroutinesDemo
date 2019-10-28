@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Answers
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -16,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class DashboardViewModelTest {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) private lateinit var itemRepository: ItemRepository
+    @Mock private lateinit var itemRepository: ItemRepository
     @InjectMocks private lateinit var dashboardViewModel: DashboardViewModel
 
     @Test
@@ -29,7 +28,7 @@ class DashboardViewModelTest {
 
         // THEN
         val textItems = itemTextFlow.toList()
-        assert(textItems[0] == "ItemFromDB")
-        assert(textItems[1] == "ItemFromNetwork")
+        val expectedItems = listOf("ItemFromDB", "ItemFromNetwork")
+        assert(textItems == expectedItems) { "$textItems does not equal $expectedItems" }
     }
 }

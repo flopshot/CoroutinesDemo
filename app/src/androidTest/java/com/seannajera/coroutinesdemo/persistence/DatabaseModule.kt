@@ -2,7 +2,6 @@ package com.seannajera.coroutinesdemo.persistence
 
 import android.content.Context
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -14,7 +13,7 @@ class DatabaseModule {
     @Singleton
     internal fun getAppDatabase(context: Context): AppDatabase {
         return Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
+            context,
             AppDatabase::class.java
         ).allowMainThreadQueries().build()
     }
