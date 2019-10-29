@@ -17,7 +17,7 @@ class ApiModule {
     @Singleton
     fun getApi(apiRetrofit: Retrofit): ItemApi {
         val networkBehavior = NetworkBehavior.create().apply {
-            setDelay(900L, TimeUnit.MILLISECONDS)
+            setDelay(500L, TimeUnit.MILLISECONDS)
             setFailurePercent(0)
         }
 

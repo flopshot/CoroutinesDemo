@@ -15,6 +15,7 @@ import com.seannajera.coroutinesdemo.persistence.DatabaseModule
 import com.seannajera.coroutinesdemo.repository.ItemRepository
 import com.seannajera.coroutinesdemo.ui.dashboard.DashboardFragment
 import com.seannajera.coroutinesdemo.ui.dashboard.DashboardViewModel
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.junit.Before
 import org.junit.Test
@@ -30,12 +31,14 @@ class DashboardFragmentTest {
     @Before
     fun setup() {
         val itemDb = databaseModule.getAppDatabase(ApplicationProvider.getApplicationContext())
-        itemRepository = ItemRepository(itemDb, apiModule.getApi(apiModule.retrofit(OkHttpClient(),Gson())))
+        itemRepository =
+            ItemRepository(itemDb, apiModule.getApi(apiModule.retrofit(OkHttpClient(), Gson())))
     }
 
     @Test
-    fun testDashboardFragment() {
-        // GIVEN we launch the dashboard view
+    fun testDashboardFragment() = runBlocking {
+        // GIVEN a Dashboard View Model
+        // WHEN we launch the Dashboard screen
         launchInContainer(DashboardFragment::class.java, null, object : FragmentFactory() {
             override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                 return DashboardFragment().apply {
@@ -44,9 +47,11 @@ class DashboardFragmentTest {
             }
         })
 
-        // THEN verify we get the empty state "NONE" followed by the synced state "Item From Api"
-        onView(withId(R.id.text_dashboard)).check(matches(withText("None")))
-        Thread.sleep(1300L) // TODO: This is a hack.
-        onView(withId(R.id.text_dashboard)).check(matches(withText("Item From Api")))
+        // THEN we get the empty state "NONE" followed by the synced state "Item From Api"
+        onView(withId(R.id.text_dashboard)).checkWithTimeout { matches(withText("None")) }
+
+        onView(withId(R.id.text_dashboard)).checkWithTimeout {
+            matches(withText("Item From Api"))
+        }
     }
 }

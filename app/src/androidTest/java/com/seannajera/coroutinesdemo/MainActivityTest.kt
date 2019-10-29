@@ -8,13 +8,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.seannajera.coroutinesdemo.ui.MainActivity
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
     @Test
-    fun testMainActivity() {
+    fun testMainActivity() = runBlocking {
         ActivityScenario.launch(MainActivity::class.java)
 
         // GIVEN we land on the home page
@@ -26,12 +27,13 @@ class MainActivityTest {
             .perform(click())
 
         // THEN we expect to see an empty state
-        onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("None")))
-
-        Thread.sleep(1100)
+        onView(withId(R.id.text_dashboard)).checkWithTimeout {
+            ViewAssertions.matches(withText("None"))
+        }
 
         // followed by and update from the view model to update the state, after a repository sync
-        onView(withId(R.id.text_dashboard)).check(ViewAssertions.matches(withText("Item From Api")))
-
+        onView(withId(R.id.text_dashboard)).checkWithTimeout {
+            ViewAssertions.matches(withText("Item From Api"))
+        }
     }
 }

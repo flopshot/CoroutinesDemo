@@ -23,7 +23,7 @@ class ApiModule {
                 .build()
 
             val networkBehavior = NetworkBehavior.create().apply {
-                setDelay(1000L, TimeUnit.MILLISECONDS)
+                setDelay(200L, TimeUnit.MILLISECONDS)
                 setFailurePercent(0)
             }
 
