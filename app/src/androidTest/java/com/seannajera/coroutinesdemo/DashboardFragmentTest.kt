@@ -5,7 +5,8 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario.launchInContainer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -47,11 +48,11 @@ class DashboardFragmentTest {
             }
         })
 
-        // THEN we get the empty state "NONE" followed by the synced state "Item From Api"
-        onView(withId(R.id.text_dashboard)).checkWithTimeout { matches(withText("None")) }
-
-        onView(withId(R.id.text_dashboard)).checkWithTimeout {
-            matches(withText("Item From Api"))
+        // THEN we expect to see an updated repo list from the view model after a repository sync
+        onView(withId(R.id.repo_list)).checkWithTimeout {
+            ViewAssertions.matches(atPosition(0,
+                ViewMatchers.hasDescendant(withText("Item From Api"))
+            ))
         }
     }
 }

@@ -21,14 +21,14 @@ class DashboardViewModelTest {
     @Test
     fun `GIVEN items from repo WHEN fetchText called VERIFY correct items returned`() = runBlocking {
         // GIVEN
-        whenever(itemRepository.getItems()).thenReturn(flowOf(listOf(Item("ItemFromDB")), listOf(Item("ItemFromNetwork"))))
+        whenever(itemRepository.getItems()).thenReturn(flowOf(listOf(Item("ItemFromDB")), listOf(Item("ItemFromDB"), Item("ItemFromNetwork"))))
 
         // WHEN
-        val itemTextFlow = dashboardViewModel.fetchText()
+        val itemsFlow = dashboardViewModel.fetchText()
 
         // THEN
-        val textItems = itemTextFlow.toList()
-        val expectedItems = listOf("ItemFromDB", "ItemFromNetwork")
-        assert(textItems == expectedItems) { "$textItems does not equal $expectedItems" }
+        val items = itemsFlow.toList()
+        val expectedItems = listOf(arrayListOf(Item("ItemFromDB")), arrayListOf(Item("ItemFromDB"), Item("ItemFromNetwork")))
+        assert(items == expectedItems) { "$items does not equal $expectedItems" }
     }
 }
