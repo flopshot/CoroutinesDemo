@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textAlignment="center"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:text="@string/mariana_tek_repos"
             app:layout_constraintEnd_toEndOf="parent"

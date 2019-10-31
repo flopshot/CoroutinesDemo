@@ -26,7 +26,7 @@ class MainActivityTest {
 
         // GIVEN we land on the home page
         onView(withId(R.id.text_home))
-            .check(ViewAssertions.matches(withText("This is home Fragment")))
+            .check(ViewAssertions.matches(withText("Hello Mariana Tek!")))
 
         // WHEN we navigate to the dashboard page
         onView(withId(R.id.navigation_dashboard))
