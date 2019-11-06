@@ -28,7 +28,7 @@ class DashboardViewModelTest {
 
         // THEN
         val items = itemsFlow.toList()
-        val expectedItems = listOf(arrayListOf(Item("ItemFromDB")), arrayListOf(Item("ItemFromDB"), Item("ItemFromNetwork")))
+        val expectedItems = listOf(arrayListOf(ViewItem(Item("ItemFromDB"))), arrayListOf(ViewItem(Item("ItemFromDB")), ViewItem(Item("ItemFromNetwork"))))
         assert(items == expectedItems) { "$items does not equal $expectedItems" }
     }
 }

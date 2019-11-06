@@ -11,5 +11,20 @@ import javax.inject.Inject
 @ToDagger
 class DashboardViewModel @Inject constructor(private val itemRepo: ItemRepository) : ViewModel() {
 
-    fun fetchText(): Flow<ArrayList<Item>> = itemRepo.getItems().map { ArrayList(it) }
+    fun fetchText(): Flow<ArrayList<ViewItem>> =
+        itemRepo.getItems().map { items -> ArrayList(items.map { ViewItem(it) }) }
+}
+
+data class ViewItem(val item: Item) : Diffable {
+
+    override val id: String
+        get() = item.title
+
+    override fun contentSame(otherItem: Any): Boolean {
+        return if (otherItem is ViewItem) {
+            otherItem.item.title == this.item.title
+        } else {
+            false
+        }
+    }
 }
