@@ -15,14 +15,15 @@ class DashboardViewModel @Inject constructor(private val itemRepo: ItemRepositor
         itemRepo.getItems().map { items -> ArrayList(items.map { ViewItem(it) }) }
 }
 
-data class ViewItem(val item: Item) : Diffable {
+data class ViewItem(val item: Item): Diffable by DiffItem(item)
 
+class DiffItem(private val item: Item): Diffable {
     override val id: String
         get() = item.title
 
-    override fun contentSame(otherItem: Any): Boolean {
-        return if (otherItem is ViewItem) {
-            otherItem.item.title == this.item.title
+    override fun contentSameAs(otherItem: Any): Boolean {
+        return if (otherItem is Item) {
+            otherItem.title == item.title
         } else {
             false
         }

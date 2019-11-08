@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.ArrayDeque
 import java.util.Queue
 import javax.inject.Inject
@@ -51,7 +50,7 @@ class DashboardFragment : Fragment(), Injectable {
     }
 }
 
-class RepoAdapter(scope: CoroutineScope): AsyncDiffUtilAdapter<RecyclerView.ViewHolder>(scope) {
+class RepoAdapter(scope: CoroutineScope) : AsyncDiffUtilAdapter<RecyclerView.ViewHolder>(scope) {
     private val items: ArrayList<ViewItem> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -74,9 +73,10 @@ class RepoAdapter(scope: CoroutineScope): AsyncDiffUtilAdapter<RecyclerView.View
     }
 }
 
-abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val scope: CoroutineScope) : RecyclerView.Adapter<VH>() {
+abstract class AsyncDiffUtilAdapter<VH: RecyclerView.ViewHolder>(private val scope: CoroutineScope) :
+    RecyclerView.Adapter<VH>() {
 
-    private val pendingItems: Queue<MutableList<out Diffable>> = ArrayDeque()
+    private val pendingItems: Queue<MutableList<*>> = ArrayDeque()
 
     /**
      * Method to be used to update the RecyclerView.Adapter backing data
@@ -84,8 +84,10 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
      * @param oldItems Previous backing list of the RecyclerView.Adapter
      * @param newItems List of data to be used as new backing data of the list
      */
-    protected fun updateItems(newItems: MutableList<out Diffable>,
-        oldItems: MutableList<out Diffable>) {
+    protected fun <T : Diffable> updateItems(
+        newItems: MutableList<T>,
+        oldItems: MutableList<T>
+    ) {
         pendingItems.add(newItems)
         if (pendingItems.size > 1) {
             return
@@ -94,32 +96,37 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
         updateItemsInternal(newItems, oldItems)
     }
 
-    private fun updateItemsInternal(newItems: MutableList<out Diffable>, oldItems: MutableList<out Diffable>) {
-
+    private fun <T : Diffable> updateItemsInternal(
+        newItems: MutableList<T>,
+        oldItems: MutableList<T>
+    ) {
         scope.launch(Dispatchers.Default) {
             val diffResult = DiffUtil.calculateDiff(itemsDiffUtilCallback(oldItems, newItems))
 
             launch(Dispatchers.Main) {
-                Timber.w("Applying Diff Result")
-                applyDiffResult(newItems, ArrayList(oldItems), diffResult)
+                applyDiffResult(newItems, oldItems, diffResult)
             }
-
         }
     }
 
-    private fun applyDiffResult(newItems: MutableList<out Diffable>, oldItems: MutableList<in Diffable>,
-        diffResult: DiffUtil.DiffResult) {
+    private fun <T : Diffable> applyDiffResult(
+        newItems: MutableList<T>, oldItems: MutableList<T>,
+        diffResult: DiffUtil.DiffResult
+    ) {
         pendingItems.remove()
         dispatchUpdates(newItems, oldItems, diffResult)
         pendingItems.peek()?.let {
             if (pendingItems.size > 0) {
-                updateItemsInternal(it, newItems)
+                @Suppress("UNCHECKED_CAST")
+                updateItemsInternal(it as MutableList<T>, newItems)
             }
         }
     }
 
-    private fun dispatchUpdates(newItems: List<Diffable>, oldItems: MutableList<in Diffable>,
-        diffResult: DiffUtil.DiffResult) {
+    private fun <T : Diffable> dispatchUpdates(
+        newItems: List<T>, oldItems: MutableList<T>,
+        diffResult: DiffUtil.DiffResult
+    ) {
         diffResult.dispatchUpdatesTo(this)
         oldItems.clear()
         oldItems.addAll(newItems)
@@ -133,29 +140,27 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
      * @param newItems List of data to be used as new backing data of the list
      * @return the DiffUtil.Callback used to calculate the DiffUtil.Result in the background thread
      */
-    private fun itemsDiffUtilCallback(oldItems: List<Diffable>,
-        newItems: List<Diffable>): DiffUtil.Callback {
+    private fun <T : Diffable> itemsDiffUtilCallback(
+        oldItems: List<T>,
+        newItems: List<T>
+    ): DiffUtil.Callback {
         return object : DiffUtil.Callback() {
             override fun getOldListSize(): Int = oldItems.size
 
             override fun getNewListSize(): Int = newItems.size
 
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
-                = oldItems[oldItemPosition].isSame(newItems[newItemPosition])
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                oldItems[oldItemPosition].id == newItems[newItemPosition].id
 
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
-                = oldItems[oldItemPosition].contentSame(newItems[newItemPosition])
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                oldItems[oldItemPosition].contentSameAs(newItems[newItemPosition])
         }
     }
-
 }
 
 interface Diffable {
+
     val id: String
 
-    fun isSame(otherItem: Diffable): Boolean {
-        return (otherItem::class == this::class && otherItem.id == this.id)
-    }
-
-    fun contentSame(otherItem: Any): Boolean
+    fun contentSameAs(otherItem: Any): Boolean
 }
