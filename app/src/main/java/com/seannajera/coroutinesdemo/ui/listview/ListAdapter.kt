@@ -3,7 +3,6 @@ package com.seannajera.coroutinesdemo.ui.listview
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.seannajera.coroutinesdemo.ui.dashboard.ItemListModel
 import kotlinx.coroutines.CoroutineScope
 
 class ListAdapter(private val listViewManager: ListViewManager, scope: CoroutineScope): AsyncDiffUtilAdapter<ListView<*>>(scope) {

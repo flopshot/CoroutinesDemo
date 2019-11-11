@@ -36,6 +36,9 @@ interface ItemDao {
 
     @Delete
     fun delete(item: Item)
+
+    @Query("DELETE FROM Item")
+    fun deleteAll()
 }
 
 @Database(entities = [Item::class], version = 1)

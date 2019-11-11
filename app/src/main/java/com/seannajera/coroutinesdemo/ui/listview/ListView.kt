@@ -4,13 +4,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.seannajera.coroutinesdemo.R
-import com.seannajera.coroutinesdemo.ui.dashboard.ItemListModel
-
-interface ListModel {
-    val id: String
-    val layout: ListViewLayout
-    fun contentSameAs(otherItem: Any): Boolean
-}
 
 sealed class ListView<Model : ListModel>(view: View) :
     RecyclerView.ViewHolder(view) {
