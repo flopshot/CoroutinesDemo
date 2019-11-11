@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import java.util.ArrayDeque
 import java.util.Queue
 
-abstract class AsyncDiffUtilAdapter<VH: RecyclerView.ViewHolder>(private val scope: CoroutineScope) :
+abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val scope: CoroutineScope) :
     RecyclerView.Adapter<VH>() {
 
     private val pendingItems: Queue<MutableList<*>> = ArrayDeque()
@@ -89,6 +89,9 @@ abstract class AsyncDiffUtilAdapter<VH: RecyclerView.ViewHolder>(private val sco
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 oldItems[oldItemPosition].contentSameAs(newItems[newItemPosition])
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? =
+                Pair(oldItems[oldItemPosition], newItems[newItemPosition])
         }
     }
 }

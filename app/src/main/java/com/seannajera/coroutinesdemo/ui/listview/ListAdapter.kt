@@ -8,6 +8,16 @@ import kotlinx.coroutines.CoroutineScope
 
 class ListAdapter(private val listViewManager: ListViewManager, scope: CoroutineScope): AsyncDiffUtilAdapter<ListView<*>>(scope) {
 
+    override fun onBindViewHolder(listView: ListView<*>, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(listView, position)
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            val modelState = payloads[0] as Pair<ListModel, ListModel>
+            listViewManager.bindListView(modelState.first, modelState.second, listView)
+        }
+    }
+
     private val models: ArrayList<ListModel> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ListView<*> {
@@ -20,7 +30,7 @@ class ListAdapter(private val listViewManager: ListViewManager, scope: Coroutine
     }
 
     override fun onBindViewHolder(listView: ListView<*>, position: Int) {
-        listViewManager.bindListView(models[position], listView)
+        listViewManager.bindListView(null, models[position], listView)
     }
 
     override fun getItemViewType(position: Int): Int = position
@@ -39,9 +49,9 @@ class ListViewManager {
         }
     }
 
-    fun bindListView(listModel: ListModel, listView: ListView<*>) {
+    fun bindListView(oldListModel: ListModel?, newListModel: ListModel, listView: ListView<*>) {
         when (listView) {
-            is ItemListView -> listView.onBind(listModel as ItemListModel)
+            is ItemListView -> listView.onBind(oldListModel as ItemListModel?, newListModel as ItemListModel)
         }
     }
 }

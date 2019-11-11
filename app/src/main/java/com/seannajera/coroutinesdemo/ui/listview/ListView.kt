@@ -14,7 +14,7 @@ interface ListModel {
 
 sealed class ListView<Model : ListModel>(view: View) :
     RecyclerView.ViewHolder(view) {
-    abstract fun onBind(model: Model)
+    abstract fun onBind(oldModel: Model?, newModel: Model)
 }
 
 sealed class ListViewLayout {
@@ -26,8 +26,9 @@ sealed class ListViewLayout {
 class ItemListView(view: View) : ListView<ItemListModel>(view) {
     private val titleView: TextView by lazy { view.findViewById<TextView>(R.id.listItemText) }
 
-    override fun onBind(model: ItemListModel) {
-        titleView.text = model.item.title
+    override fun onBind(oldModel: ItemListModel?, newModel: ItemListModel) {
+        
+        if (oldModel?.item?.title != newModel.item.title) titleView.text = newModel.item.title
     }
 }
 
