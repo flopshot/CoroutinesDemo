@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.seannajera.coroutinesdemo.dagger.ToDagger
 import com.seannajera.coroutinesdemo.persistence.Item
 import com.seannajera.coroutinesdemo.repository.ItemRepository
+import com.seannajera.coroutinesdemo.ui.listview.ListModel
+import com.seannajera.coroutinesdemo.ui.listview.ListViewLayout
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -11,13 +13,12 @@ import javax.inject.Inject
 @ToDagger
 class DashboardViewModel @Inject constructor(private val itemRepo: ItemRepository) : ViewModel() {
 
-    fun fetchText(): Flow<ArrayList<ViewItem>> =
-        itemRepo.getItems().map { items -> ArrayList(items.map { ViewItem(it) }) }
+    fun fetchText(): Flow<ArrayList<ItemListModel>> =
+        itemRepo.getItems().map { items -> ArrayList(items.map { ItemListModel(it) }) }
 }
 
-data class ViewItem(val item: Item): Diffable by DiffItem(item)
+class ItemListModel(val item: Item): ListModel {
 
-class DiffItem(private val item: Item): Diffable {
     override val id: String
         get() = item.title
 
@@ -28,4 +29,7 @@ class DiffItem(private val item: Item): Diffable {
             false
         }
     }
+
+    override val layout: ListViewLayout
+        get() = ListViewLayout.ItemListLayout()
 }
