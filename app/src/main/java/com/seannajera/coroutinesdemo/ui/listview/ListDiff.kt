@@ -12,6 +12,7 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
     RecyclerView.Adapter<VH>() {
 
     private val pendingItems: Queue<MutableList<*>> = ArrayDeque()
+    protected var onListUpdated: ((List<ListModel>) -> Unit)? = null
 
     /**
      * Method to be used to update the RecyclerView.Adapter backing data
@@ -45,7 +46,8 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
     }
 
     private fun applyDiffResult(
-        newItems: MutableList<out ListModel>, oldItems: MutableList<ListModel>,
+        newItems: MutableList<out ListModel>,
+        oldItems: MutableList<ListModel>,
         diffResult: DiffUtil.DiffResult
     ) {
         pendingItems.remove()
@@ -59,12 +61,14 @@ abstract class AsyncDiffUtilAdapter<VH : RecyclerView.ViewHolder>(private val sc
     }
 
     private fun dispatchUpdates(
-        newItems: List<ListModel>, oldItems: MutableList<ListModel>,
+        newItems: List<ListModel>,
+        oldItems: MutableList<ListModel>,
         diffResult: DiffUtil.DiffResult
     ) {
         diffResult.dispatchUpdatesTo(this)
         oldItems.clear()
         oldItems.addAll(newItems)
+        onListUpdated?.invoke(oldItems)
     }
 
     /**
