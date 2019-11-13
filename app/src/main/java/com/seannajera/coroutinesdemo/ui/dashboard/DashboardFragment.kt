@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seannajera.coroutinesdemo.R
 import com.seannajera.coroutinesdemo.dagger.FromDagger
 import com.seannajera.coroutinesdemo.dagger.Injectable
-import com.seannajera.coroutinesdemo.ui.listview.ListAdapter
-import com.seannajera.coroutinesdemo.ui.listview.ListViewManager
+import com.seannajera.coroutinesdemo.ui.listviews.ListViewManager
+import com.seannajera.listview.ListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -47,3 +47,4 @@ class DashboardFragment : Fragment(), Injectable {
         return root
     }
 }
+

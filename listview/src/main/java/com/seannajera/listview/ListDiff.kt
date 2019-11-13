@@ -1,4 +1,4 @@
-package com.seannajera.coroutinesdemo.ui.listview
+package com.seannajera.listview
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView

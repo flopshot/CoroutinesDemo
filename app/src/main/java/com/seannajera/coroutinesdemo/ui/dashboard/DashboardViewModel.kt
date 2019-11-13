@@ -3,7 +3,7 @@ package com.seannajera.coroutinesdemo.ui.dashboard
 import androidx.lifecycle.ViewModel
 import com.seannajera.coroutinesdemo.dagger.ToDagger
 import com.seannajera.coroutinesdemo.repository.ItemRepository
-import com.seannajera.coroutinesdemo.ui.listview.ItemListModel
+import com.seannajera.coroutinesdemo.ui.listviews.ItemListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

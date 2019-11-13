@@ -1,13 +1,8 @@
-package com.seannajera.coroutinesdemo.ui.listview
+package com.seannajera.coroutinesdemo.ui.listviews
 
 import com.seannajera.coroutinesdemo.persistence.Item
-
-
-interface ListModel {
-    val id: String
-    val layout: ListViewLayout
-    fun contentSameAs(otherItem: Any): Boolean
-}
+import com.seannajera.listview.ListModel
+import com.seannajera.listview.ListViewLayout
 
 class ItemListModel(val item: Item): ListModel {
 
@@ -23,5 +18,5 @@ class ItemListModel(val item: Item): ListModel {
     }
 
     override val layout: ListViewLayout
-        get() = ListViewLayout.ItemListLayout()
+        get() = ItemListLayout()
 }

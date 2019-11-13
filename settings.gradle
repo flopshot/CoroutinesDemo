@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':listview'
 rootProject.name='CoroutinesDemo'
