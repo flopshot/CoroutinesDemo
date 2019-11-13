@@ -4,7 +4,7 @@ import com.seannajera.coroutinesdemo.persistence.Item
 import com.seannajera.listview.ListModel
 import com.seannajera.listview.ListViewLayout
 
-class ItemListModel(val item: Item): ListModel {
+data class ItemListModel(val item: Item): ListModel {
 
     override val id: String
         get() = item.title

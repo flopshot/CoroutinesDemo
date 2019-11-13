@@ -15,4 +15,4 @@ class ItemListView(view: View) : ListView<ItemListModel>(view) {
     }
 }
 
-class ItemListLayout : ListViewLayout() { override val id: Int = R.layout.item  }
+data class ItemListLayout(override val id: Int = R.layout.item) : ListViewLayout()

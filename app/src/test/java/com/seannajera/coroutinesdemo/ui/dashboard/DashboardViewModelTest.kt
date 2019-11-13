@@ -3,6 +3,7 @@ package com.seannajera.coroutinesdemo.ui.dashboard
 import com.nhaarman.mockitokotlin2.whenever
 import com.seannajera.coroutinesdemo.persistence.Item
 import com.seannajera.coroutinesdemo.repository.ItemRepository
+import com.seannajera.coroutinesdemo.ui.listviews.ItemListModel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -28,7 +29,7 @@ class DashboardViewModelTest {
 
         // THEN
         val items = itemsFlow.toList()
-        val expectedItems = listOf(arrayListOf(ViewItem(Item("ItemFromDB"))), arrayListOf(ViewItem(Item("ItemFromDB")), ViewItem(Item("ItemFromNetwork"))))
+        val expectedItems = listOf(arrayListOf(ItemListModel(Item("ItemFromDB"))), arrayListOf(ItemListModel(Item("ItemFromDB")), ItemListModel(Item("ItemFromNetwork"))))
         assert(items == expectedItems) { "$items does not equal $expectedItems" }
     }
 }
