@@ -31,7 +31,7 @@ class DashboardFragment : Fragment(), Injectable {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val recyclerView = root.findViewById<RecyclerView>(R.id.repo_list)
-        val repoAdapter = ListAdapter(listViewManager, this.lifecycleScope)
+        val repoAdapter = ListAdapter(listViewManager)
         recyclerView.adapter = repoAdapter
 
         dashboardViewModel
