@@ -43,7 +43,7 @@ abstract class ModelSyncExecutor<ModelType> {
                 )
             }
             .catch { e ->
-                Timber.i("reactiveModel: ${e.localizedMessage}")
+                Timber.w("SEAN DEBUG: error from reactive flow: ${e.localizedMessage}")
             }
 
     protected abstract fun syncToPersistence(model: ModelType)
@@ -63,19 +63,14 @@ abstract class ModelSyncExecutor<ModelType> {
 
             loadFromNetwork()
                 .onEach { modelBeforeCall ->
-
-                    Timber.i("Model from api: $modelBeforeCall")
                     syncToPersistence(modelBeforeCall)
                 }.flatMapLatest { modelAfterCall ->
-
                     requestInFlight.set(false)
-                    Timber.i("After api Model from DB: $modelAfterCall")
                     loadFromPersistence()
                 }.catch { e ->
-
                     requestInFlight.set(false)
                     onNetworkFailed(e)
-                    loadFromPersistence()
+                    emitAll(loadFromPersistence())
                 }
         } else {
             loadFromPersistence()

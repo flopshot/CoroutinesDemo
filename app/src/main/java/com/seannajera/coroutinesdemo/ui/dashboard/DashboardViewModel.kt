@@ -12,5 +12,11 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(private val itemRepo: ItemRepository) : ViewModel() {
 
     fun fetchText(): Flow<ArrayList<ItemListModel>> =
-        itemRepo.getItems().map { items -> ArrayList(items.map { ItemListModel(it) }) }
+        itemRepo.getItems().map { items ->
+            ArrayList(
+                items.map { rawItem ->
+                    ItemListModel(rawItem)
+                }
+            )
+        }
 }
