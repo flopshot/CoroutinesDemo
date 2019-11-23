@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seannajera.coroutinesdemo.R
 import com.seannajera.coroutinesdemo.dagger.FromDagger
 import com.seannajera.coroutinesdemo.dagger.Injectable
-import com.seannajera.coroutinesdemo.ui.listviews.ListViewManager
-import com.seannajera.listview.ListAdapter
+import com.seannajera.coroutinesdemo.ui.components.AppComponentManager
+import com.seannajera.componentview.ComponentAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class DashboardFragment : Fragment(), Injectable {
 
     @Inject @FromDagger lateinit var dashboardViewModel: DashboardViewModel
-    val listViewManager = ListViewManager()
+    val listViewManager = AppComponentManager()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +31,7 @@ class DashboardFragment : Fragment(), Injectable {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val recyclerView = root.findViewById<RecyclerView>(R.id.repo_list)
-        val repoAdapter = ListAdapter(listViewManager)
+        val repoAdapter = ComponentAdapter(listViewManager)
         recyclerView.adapter = repoAdapter
 
         dashboardViewModel
